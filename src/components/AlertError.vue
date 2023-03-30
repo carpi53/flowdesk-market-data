@@ -6,7 +6,7 @@ const props = defineProps({
 
 <template>
   <div class="container">
-     Failed to fetch - error : {{ message }}
+     Failed to fetch - endpoint : {{ message }}
   </div>
 </template>
 
@@ -17,6 +17,7 @@ const props = defineProps({
   background-color: var(--red);
   border-radius: 10px;
   padding: 14px 16px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   color: white;

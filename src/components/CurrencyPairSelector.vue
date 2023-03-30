@@ -28,12 +28,13 @@ onMounted(async () => {
   isLoadingPair.value = isLoading.value;
 });
 
+//watch if the pair selected has any value then the error for empty input disapear
 watch(pairSelected, async (newPair) => {
   if (newPair) {
     errorFormInput.value = "";
   }
 })
-
+// on submit we check if the input has a value. if yes we emit to the parent the pair selected
 function onSubmit() {
   if (!pairSelected.value) {
     errorFormInput.value = "empty input"
@@ -45,7 +46,7 @@ function onSubmit() {
 </script>
 
 <template>
-  <div class="form-container">
+  <section class="form-container">
     <AlertError v-if="isError" :message="errorPairMessage" />
     <div v-else-if="allPairs.length != 0">
       <form @submit.prevent="onSubmit">
@@ -65,7 +66,7 @@ function onSubmit() {
       </form>
     </div>
     <Loader v-else />
-  </div>
+  </section>
 </template>
 
 <style lang="scss">

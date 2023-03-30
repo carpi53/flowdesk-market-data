@@ -12,29 +12,29 @@ const props = defineProps({
 
 <template>
   <Loader v-if="isLoading" />
-  <div v-if="data.length">
-    <div class="trades-result">
-      <AlertError v-if="hasError" :message="errorMessage" />
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="trade in data" :key="trade.id">
-              <td>{{ trade.id }}</td>
-              <td>{{ trade.qty }}</td>
-              <td>$ {{ (typeof trade.price === 'number') ? trade.price.toFixed(6) : trade.price }}</td>
-              <td>{{ new Date(trade.time).toLocaleString() }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <AlertError v-if="hasError" :message="errorMessage" />
+  <div v-else-if="data.length" class="trades-result">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+      </table>
+      <table>
+        <tbody>
+          <tr v-for="trade in data" :key="trade.id">
+            <td>{{ trade.id }}</td>
+            <td>{{ trade.qty.toFixed(6) }}</td>
+            <td>$ {{ trade.price.toFixed(6) }}</td>
+            <td>{{ new Date(trade.time).toLocaleString() }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -46,15 +46,18 @@ const props = defineProps({
   background-color: #fff;
   border-radius: 10px;
   padding: 20px;
-  margin-top: 20px;
+  margin: 20px 0 20px;
   overflow-y: scroll;
 
   table {
     width: 100%;
     border-collapse: collapse;
-    td {
+    td,
+    th {
       width: 25%;
       text-align: center;
+    }
+    td {
       border-left: 1px solid var(--darkerBlue);
       border-right: 1px solid var(--darkerBlue);
     }

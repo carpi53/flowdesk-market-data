@@ -1,5 +1,6 @@
-import { reactive, toRefs } from "vue";
+import { reactive, toRefs, Ref } from "vue";
 import axios from 'axios'
+import { Ticker } from "./frontType";
 
 interface State<T> {
     isLoading: boolean,
@@ -22,9 +23,8 @@ export async function useFetch<T>(url: string) {
         const response = await axios(url)
         state.data = await response.data
     } catch (error : unknown) {
-        const typedError = error as Error
         state.hasError = true
-        state.errorMessage = typedError.message
+        state.errorMessage = url
     } finally {
         state.isLoading = false
     }
@@ -35,4 +35,19 @@ export async function useFetch<T>(url: string) {
   return {
     ...toRefs(state)
   }
+}
+
+export async function setTickerData(pairSelected: string, url: string, tickerisLoading:  Ref<boolean>, tickerData: Ref<Ticker | undefined>, tickerHasError: Ref<boolean>, tickerMessage : Ref<string> ) {
+  tickerisLoading.value = true;
+  tickerData.value = {};
+  tickerHasError.value = false;
+  const { data, hasError, errorMessage, isLoading } = await useFetch<Ticker>(
+    url + pairSelected
+  );
+  if (data.value) {
+    tickerData.value = data.value;
+  }
+  tickerHasError.value = hasError.value;
+  tickerMessage.value = errorMessage.value;
+  tickerisLoading.value = isLoading.value;
 }

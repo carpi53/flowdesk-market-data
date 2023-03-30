@@ -17,7 +17,6 @@
   --lightGrey: #f7f8fd;
   --darkGrey: #647196;
   --darkerBlue: #3a4374;
-  --orange: #f49f85;
   --red: #E98888;
 }
 
@@ -36,21 +35,9 @@ body {
   color: var(--darkerBlue);
 }
 
-.texte {
-  font-size: 1.5rem;
-  line-height: 2.2rem;
-  color: var(--darkGrey);
-}
-
-.texte-bold {
-  font-weight: 600;
-  font-size: 1.3rem;
-  line-height: 1.9rem;
-}
-
 h1 {
   font-weight: 700;
-  font-size: 2.4rem;
+  font-size: clamp(2rem, 2.7vw, 2.4rem);
   line-height: 3.5rem;
   letter-spacing: -0.0333333rem;
   mix-blend-mode: normal;
@@ -59,23 +46,16 @@ h1 {
 
 h2 {
   font-weight: 700;
-  font-size: 2rem;
+  font-size: clamp(1.8rem, 2vw, 2rem);
   line-height: 2.9rem;
   letter-spacing: -0.025rem;
 }
 
 h3 {
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: clamp(1.5rem, 1.8vw, 1.8rem);
   line-height: 2.6rem;
   letter-spacing: -0.025rem;
-}
-
-h4 {
-  font-weight: 700;
-  font-size: 1.4rem;
-  line-height: 2rem;
-  letter-spacing: -0.0194444rem;
 }
 
 .btn-primary {

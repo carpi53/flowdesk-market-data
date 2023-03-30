@@ -14,7 +14,7 @@ function handleChange(sortChoice: Sorting) {
 </script>
 
 <template>
-  <div class="container">
+  <section class="container">
     <h2>Recent trades</h2>
     <div class="dropdown">
       <a href="#" @click.prevent="sortOpened = !sortOpened"
@@ -55,7 +55,7 @@ function handleChange(sortChoice: Sorting) {
         </ul>
       </div>
     </div>
-  </div>
+</section>
 </template>
 
 <style lang="scss" scoped>

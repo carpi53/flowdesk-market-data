@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import AlertError from "./AlertError.vue";
 import TitleSection from "./TitleSection.vue";
-import { numberWithCommas } from "../utils"
 const props = defineProps({
   hasError: Boolean,
   errorMessage: String,
   data: { required: true, type: Object },
   isLoading: Boolean,
+  title: String
 });
 </script>
 
 <template>
-  <div class="container">
-    <TitleSection title="24h Ticker" />
+  <section class="container">
     <AlertError v-if="hasError" :message="errorMessage" />
-    <div class="ticker-result">
+    <TitleSection v-if="Object.keys(data).length" :title="title" />
+    <div v-if="Object.keys(data).length" class="ticker-result">
       <div class="indicator">
         <h1>Price Change</h1>
         <p :class="{isRed: data.priceChangePercent < 0, isGreen: data.priceChangePercent >= 0}"><span v-if="data.priceChangePercent > 0">+</span>{{ parseFloat(data.priceChangePercent).toFixed(2) }}%</p>
@@ -32,7 +32,7 @@ const props = defineProps({
         <p>{{ parseFloat(data.volume).toFixed(0) }}</p>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>
@@ -56,7 +56,7 @@ const props = defineProps({
 
       p{
         margin-top: 35px;
-        font-size: 4rem;
+        font-size: clamp(3rem, 3.6vw, 4rem);
       }
 
       .isRed {

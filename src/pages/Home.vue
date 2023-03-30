@@ -1,37 +1,46 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { Trade, Ticker, Sorting } from "../frontType";
-import { useFetch } from "../fetch";
+import { useFetch, setTickerData } from "../fetch";
 import TitleSection from "../components/TitleSection.vue";
 import CurrencyPairSelector from "../components/CurrencyPairSelector.vue";
 import RecentTrade from "../components/RecentTrade.vue";
 import TradeFilter from "../components/TradeFilter.vue";
 import TickerRender from "../components/TickerRender.vue";
 
-async function getData(pairSelected: string) {
-  getTicker24hData(pairSelected);
-  getRecentTradeData(pairSelected);
-}
+//init the ticker reactive variables
+const tickerIsLoading = ref(false);
+const tickerData = ref<Ticker>({});
+const tickerHasError = ref(false);
+const tickerMessage = ref("");
 
-//init the ticker 24h variables
+//init the ticker 24h reactive variables
 const ticker24IsLoading = ref(false);
-const ticker24Data = ref<Ticker | undefined>();
+const ticker24Data = ref<Ticker>({});
 const ticker24HasError = ref(false);
 const ticker24Message = ref("");
-// fetch the ticker 24h data
-async function getTicker24hData(pairSelected: string) {
-  ticker24IsLoading.value = true;
-  ticker24Data.value = undefined;
-  const { data, hasError, errorMessage, isLoading } = await useFetch<Ticker>(
-    "https://api.binance.com/api/v3/ticker/24hr?symbol=" + pairSelected
+
+// get the market Data, it's emited by the component CurrencyPairSelector on submit
+async function getData(pairSelected: string) {
+  // set ticker data
+  setTickerData(
+    pairSelected,
+    "https://api.binance.com/api/v3/ticker?symbol=",
+    tickerIsLoading,
+    tickerData,
+    tickerHasError,
+    tickerMessage
   );
-  if (data.value) {
-    ticker24Data.value = data.value;
-  }
-  ticker24HasError.value = hasError.value;
-  ticker24Message.value = errorMessage.value;
-  ticker24IsLoading.value = isLoading.value;
-  console.log(ticker24Data.value);
+  // set the ticker 24h data
+  setTickerData(
+    pairSelected,
+    "https://api.binance.com/api/v3/ticker/24hr?symbol=",
+    ticker24IsLoading,
+    ticker24Data,
+    ticker24HasError,
+    ticker24Message
+  );
+  getRecentTradeData(pairSelected);
 }
 
 //init recent trade variable
@@ -48,7 +57,20 @@ async function getRecentTradeData(pairSelected: string) {
     "https://api.binance.com/api/v3/trades?symbol=" + pairSelected
   );
   if (data.value) {
-    tradesData.value = data.value;
+    data.value.forEach((element) => {
+      tradesData.value.push({
+        id: element.id,
+        price:
+          typeof element.price != "number"
+            ? parseFloat(element.price)
+            : element.price,
+        qty:
+          typeof element.qty != "number"
+            ? parseFloat(element.qty)
+            : element.qty,
+        time: element.time,
+      });
+    });
   }
   tradeHasError.value = hasError.value;
   tradeErrorMessage.value = errorMessage.value;
@@ -58,6 +80,7 @@ async function getRecentTradeData(pairSelected: string) {
 
 const sort = ref<Sorting>("Date");
 
+// sorting the recent trade, it's emited by the component TradeFilter
 function sortingTrades(sort: string): void {
   switch (sort) {
     case "Quantity":
@@ -81,28 +104,32 @@ function sortingTrades(sort: string): void {
 
 <template>
   <main>
-    <div class="global-container">
-      <TitleSection title="Flowdesk - Check the market data" />
-      <CurrencyPairSelector
-        @response="(pairSelected) => getData(pairSelected)"
-      />
-      <TickerRender v-if="ticker24Data != undefined"
-        :data="ticker24Data"
-        :hasError="ticker24HasError"
-        :errorMessage="ticker24Message"
-        :isLoading="ticker24IsLoading"
-      />
-      <TradeFilter
-        v-if="tradesData.length"
-        @response="(sortSelected) => sortingTrades(sortSelected)"
-      />
-      <RecentTrade
-        :data="tradesData"
-        :hasError="tradeHasError"
-        :errorMessage="tradeErrorMessage"
-        :isLoading="tradeIsLoading"
-      />
-    </div>
+    <TitleSection title="Flowdesk - Check the market data" />
+    <CurrencyPairSelector @response="(pairSelected) => getData(pairSelected)" />
+    <TickerRender
+      :data="tickerData"
+      :hasError="tickerHasError"
+      :errorMessage="tickerMessage"
+      :isLoading="tickerIsLoading"
+      title="Ticker"
+    />
+    <TickerRender
+      :data="ticker24Data"
+      :hasError="ticker24HasError"
+      :errorMessage="ticker24Message"
+      :isLoading="ticker24IsLoading"
+      title="24Hr Ticker"
+    />
+    <TradeFilter
+      v-if="tradesData.length"
+      @response="(sortSelected) => sortingTrades(sortSelected)"
+    />
+    <RecentTrade
+      :data="tradesData"
+      :hasError="tradeHasError"
+      :errorMessage="tradeErrorMessage"
+      :isLoading="tradeIsLoading"
+    />
   </main>
 </template>
 
@@ -111,10 +138,5 @@ main {
   max-width: 1150px;
   margin: 0 auto;
   padding: 64px 2vw 0px;
-
-  .global-container {
-    border-radius: 10px;
-    padding: 20px;
-  }
 }
 </style>
