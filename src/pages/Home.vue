@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import { Trade, Ticker, Sorting } from "../frontType";
 import { useFetch, setTickerData } from "../fetch";
 import TitleSection from "../components/TitleSection.vue";

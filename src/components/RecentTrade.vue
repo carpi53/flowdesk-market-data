@@ -8,34 +8,31 @@ const props = defineProps({
   data: { required: true, type: Array<Trade> },
   isLoading: Boolean,
 });
+
 </script>
 
 <template>
   <Loader v-if="isLoading" />
   <AlertError v-if="hasError" :message="errorMessage" />
   <div v-else-if="data.length" class="trades-result">
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-      </table>
-      <table>
-        <tbody>
-          <tr v-for="trade in data" :key="trade.id">
-            <td>{{ trade.id }}</td>
-            <td>{{ trade.qty.toFixed(6) }}</td>
-            <td>$ {{ trade.price.toFixed(6) }}</td>
-            <td>{{ new Date(trade.time).toLocaleString() }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="trade in data" :key="trade.id">
+          <td>{{ trade.id }}</td>
+          <td>{{ trade.qty.toFixed(6) }}</td>
+          <td>$ {{ trade.price.toFixed(6) }}</td>
+          <td>{{ new Date(trade.time).toLocaleString() }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -56,6 +53,7 @@ const props = defineProps({
     th {
       width: 25%;
       text-align: center;
+      padding: 5px;
     }
     td {
       border-left: 1px solid var(--darkerBlue);
